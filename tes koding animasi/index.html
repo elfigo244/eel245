@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELFIGO | INNOVA EDITION</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Outfit:wght@300;600;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background: url('innova.png') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #050505;
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+        }
+
+        .sakura-box { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .petal { 
+            position: absolute; background: #ffb7c5; border-radius: 100% 0 100% 0; 
+            opacity: 0.5; animation: fall linear infinite; 
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        .card {
+            position: relative; width: 90vw; height: 80vh;
+            background: rgba(15, 15, 20, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            border-radius: 30px;
+            display: flex; padding: 40px; gap: 40px;
+            z-index: 10; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .img-box {
+            flex: 1.5; border-radius: 20px; overflow: hidden;
+            border: 2px solid #00f0ff;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+        }
+        /* Update biar foto pas dan gak kepotong bawahnya */
+        .img-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            object-position: center 61%; 
+            display: block; 
+        }
+
+        .content { flex: 1; display: flex; flex-direction: column; justify-content: center; color: white; }
+        .tag { font-family: 'Orbitron', sans-serif; font-size: 10px; color: #00f0ff; letter-spacing: 5px; margin-bottom: 15px; }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 4rem; line-height: 1; margin-bottom: 10px; text-shadow: 0 0 20px #00f0ff; }
+        .location { font-size: 14px; letter-spacing: 3px; opacity: 0.8; margin-bottom: 20px; border-left: 3px solid #ffb7c5; padding-left: 15px; }
+        
+        /* Gaya baru buat deskripsi CDID */
+        .cdid-desc {
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+        }
+        .cdid-desc b { color: #00f0ff; font-family: 'Orbitron', sans-serif; font-size: 11px; }
+
+        .btn-group { display: flex; flex-direction: column; gap: 15px; }
+        .btn {
+            padding: 20px; border-radius: 15px; text-decoration: none;
+            color: white; font-weight: 800; font-family: 'Orbitron', sans-serif; font-size: 13px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+        }
+        .btn:hover { background: rgba(0, 240, 255, 0.2); border-color: #00f0ff; transform: scale(1.02) translateX(10px); }
+
+        #trail { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; }
+    </style>
+</head>
+<body>
+
+<canvas id="trail"></canvas>
+<div class="sakura-box" id="sakura"></div>
+
+<div class="card" id="mainCard">
+    <div class="img-box">
+        <img src="innova.png" alt="Innova Elfigo">
+    </div>
+    <div class="content">
+        <p class="tag">CDID ELITE // ID 083</p>
+        <h1>ELFIGO</h1>
+        <p class="location">PONTIANAK, WEST BORNEO</p>
+        
+        <div class="cdid-desc">
+            <b>VEHICLE STATUS:</b> CDID Elite Driver with Toyota Innova Diesel Project. <br>
+            <b>PROJECT LOG:</b> Focused on pure fitment, performance tuning, and Pontianak regional meetups. Join the elite community for trade and cruises.
+        </div>
+
+        <div class="btn-group">
+            <a href="https://wa.me/6283857796343" class="btn" target="_blank">CONTACT WHATSAPP <span>→</span></a>
+            <a href="https://discord.gg/cemxjsmRH" class="btn" target="_blank">JOIN DISCORD <span>→</span></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sakura = document.getElementById('sakura');
+    for(let i=0; i<35; i++) {
+        let p = document.createElement('div');
+        p.className = 'petal';
+        p.style.left = Math.random()*100+'%';
+        p.style.width = p.style.height = (Math.random()*8+5)+'px';
+        p.style.animationDuration = (Math.random()*7+5)+'s';
+        p.style.animationDelay = Math.random()*5+'s';
+        sakura.appendChild(p);
+    }
+
+    const canvas = document.getElementById('trail');
+    const ctx = canvas.getContext('2d');
+    let pts = [];
+    window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    window.onresize();
+
+    window.addEventListener('mousemove', (e) => {
+        pts.push({x: e.clientX, y: e.clientY, l: 1});
+        const card = document.getElementById('mainCard');
+        const rx = (window.innerHeight / 2 - e.clientY) / 70;
+        const ry = (window.innerWidth / 2 - e.clientX) / 70;
+        card.style.transform = `rotateX(${rx}deg) rotateY(${-ry}deg)`;
+    });
+
+    function draw() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.strokeStyle = '#00f0ff'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath();
+        pts.forEach((p, i) => {
+            p.l -= 0.04;
+            if(p.l <= 0) pts.splice(i, 1);
+            ctx.lineTo(p.x, p.y);
+        });
+        ctx.stroke();
+        requestAnimationFrame(draw);
+    }
+    draw();
+</script>
+</body>
+</html>
