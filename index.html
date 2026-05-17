@@ -13,10 +13,9 @@
 
 body, html { 
     background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; 
-    min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
+    min-height: 100vh; overflow: hidden; touch-action: none;
 }
 
-/* ── CANVAS SPIDER ── */
 canvas {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: 100; pointer-events: none;
@@ -29,33 +28,29 @@ canvas {
     min-height: 100vh; padding: 20px; perspective: 1000px;
 }
 
-/* ── MIRKO BALIK KE SAMPING ── */
 .mirko {
     position: absolute; 
-    right: -5%; /* Geser ke samping kanan */
-    bottom: -20px;
-    height: 90vh; 
+    right: -5%; 
+    bottom: -10px;
+    height: 92vh; 
     width: auto; 
     z-index: 1; 
     pointer-events: none;
     filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 40px rgba(0, 240, 255, 0.4));
-    will-change: transform;
 }
 
-/* ── CARD SUPER TRANSPARAN (GLASSMORPHISM) ── */
 .tilt-wrap { width: 100%; max-width: 950px; z-index: 10; transform-style: preserve-3d; }
 
 .card {
     position: relative; 
-    background: rgba(2, 14, 28, 0.15); /* Dibuat jauh lebih bening */
-    backdrop-filter: blur(8px) saturate(1.8); /* Blur dikurangi biar Mirko kelihatan */
-    -webkit-backdrop-filter: blur(8px) saturate(1.8);
-    border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 40px;
+    background: rgba(2, 14, 28, 0.08); 
+    backdrop-filter: blur(4px) saturate(1.8);
+    -webkit-backdrop-filter: blur(4px) saturate(1.8);
+    border: 1px solid rgba(0, 240, 255, 0.15); border-radius: 40px;
     display: grid; grid-template-columns: 400px 1fr; overflow: hidden;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
 }
 
-.visual { padding: 30px; display: block; }
+.visual { padding: 30px; }
 .img-wrap { width: 100%; height: 500px; border-radius: 25px; overflow: hidden; border: 1px solid var(--c); }
 .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -66,11 +61,11 @@ h1 {
     background: linear-gradient(#fff, var(--c)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 
-.bio { background: rgba(0, 240, 255, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--c); margin-bottom: 25px; }
+.bio { background: rgba(0, 240, 255, 0.05); padding: 20px; border-radius: 15px; border-left: 5px solid var(--c); margin-bottom: 25px; }
 .bio p { font-size: 14px; color: #fff; line-height: 1.6; }
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 35px; }
-.stat { background: rgba(0,0,0,0.7); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--c); }
+.stat { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--c); }
 .stat-v { font-family: 'Orbitron'; color: var(--c); font-size: 1.3rem; }
 
 .links { display: flex; flex-direction: column; gap: 12px; }
@@ -79,14 +74,12 @@ h1 {
     font-family: 'Orbitron'; font-size: 11px; text-align: center;
     background: rgba(0, 240, 255, 0.1); border: 1px solid var(--c); transition: 0.3s;
 }
-.btn:hover { background: var(--c); color: #000; box-shadow: 0 0 30px var(--c); }
 
 @media (max-width: 880px) {
     .card { grid-template-columns: 1fr; border-radius: 30px; }
-    .visual { padding: 20px; }
-    .img-wrap { height: 250px; }
+    .img-wrap { height: 240px; }
     .info { padding: 30px; text-align: center; }
-    .mirko { height: 70vh; right: -20%; } 
+    .mirko { height: 75vh; right: -15%; } 
     *, *::before, *::after { cursor: auto; }
 }
 </style>
@@ -125,69 +118,89 @@ h1 {
 </div>
 
 <script>
-/* ── SPIDER ENGINE ── */
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-let points = [];
-let mouse = { x: -1000, y: -1000 };
+let particles = [];
+let mouse = { x: null, y: null, radius: 150 };
 
-const updateMouse = (e) => {
-    mouse.x = e.clientX || (e.touches && e.touches[0].clientX);
-    mouse.y = e.clientY || (e.touches && e.touches[0].clientY);
-};
-window.addEventListener('mousemove', updateMouse);
-window.addEventListener('touchstart', updateMouse);
-window.addEventListener('touchmove', updateMouse);
+window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
 
 function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
 window.addEventListener('resize', resize);
 resize();
 
-class Point {
+class Particle {
     constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 1.5;
-        this.vy = (Math.random() - 0.5) * 1.5;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.size = 2;
     }
     update() {
+        if (this.x > canvas.width || this.x < 0) this.vx = -this.vx;
+        if (this.y > canvas.height || this.y < 0) this.vy = -this.vy;
         this.x += this.vx; this.y += this.vy;
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        if (mouse.x != null) {
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            if (distance < mouse.radius) {
+                this.x -= dx * 0.03;
+                this.y -= dy * 0.03;
+            }
+        }
+    }
+    draw() {
+        ctx.fillStyle = '#00f0ff';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
-for (let i = 0; i < 55; i++) points.push(new Point());
 
-function draw() {
-    ctx.clearRect(0,0,canvas.width, canvas.height);
-    points.forEach(p => {
-        p.update();
-        let dx = mouse.x - p.x;
-        let dy = mouse.y - p.y;
-        let d = Math.sqrt(dx*dx + dy*dy);
-        if (d < 180) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 240, 255, ${1 - d/180})`;
-            ctx.lineWidth = 0.8;
-            ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
-            ctx.stroke();
-        }
-    });
-    requestAnimationFrame(draw);
+function init() {
+    particles = [];
+    let count = (canvas.width * canvas.height) / 9000;
+    for (let i = 0; i < count; i++) particles.push(new Particle());
 }
-draw();
 
-/* ── MIRKO ANIMATION ── */
-const mirko = document.getElementById('mirko');
-let ft = 0;
 function animate() {
-    ft += 0.015;
-    mirko.style.transform = `translateY(${Math.sin(ft) * 12}px)`;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        for (let j = i; j < particles.length; j++) {
+            let dx = particles[i].x - particles[j].x;
+            let dy = particles[i].y - particles[j].y;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            if (distance < 100) {
+                ctx.strokeStyle = `rgba(0, 240, 255, ${1 - distance/100})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+            }
+        }
+    }
     requestAnimationFrame(animate);
 }
+
+init();
 animate();
 
-// Parallax Card
+const mirko = document.getElementById('mirko');
+let t = 0;
+function mirkoAnim() {
+    t += 0.02;
+    mirko.style.transform = `translateY(${Math.sin(t) * 15}px)`;
+    requestAnimationFrame(mirkoAnim);
+}
+mirkoAnim();
+
 document.addEventListener('mousemove', e => {
     const nx = (e.clientX / window.innerWidth - 0.5) * 2;
     const ny = (e.clientY / window.innerHeight - 0.5) * 2;
