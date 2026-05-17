@@ -1,150 +1,209 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELFIGO | INNOVA EDITION</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Outfit:wght@300;600;800&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELFIGO | SUPREME DIESEL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;900&display=swap');
 
-        /* RESET TOTAL & CENTERING */
-        html, body { height: 100%; background-color: #050505; margin: 0; padding: 0; }
-        * { box-sizing: border-box; }
-        
-        body {
-            background: url('innova.png') no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Outfit', sans-serif;
-            display: flex;
-            justify-content: center; /* Ketengahin Horizontal */
-            align-items: center;    /* Ketengahin Vertikal */
-            min-height: 100vh;
-            padding: 20px;
-            overflow-x: hidden;
-            touch-action: pan-y;
-        }
+:root { --c: #00f0ff; --bg: #020b14; }
 
-        body::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 0;
-        }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; cursor: none; }
 
-        /* SAKURA */
-        .sakura-box { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .petal { position: absolute; background: #ffb7c5; border-radius: 100% 0 100% 0; opacity: 0.5; animation: fall linear infinite; }
-        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(360deg); } }
+body, html { 
+    background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; 
+    min-height: 100vh; overflow: hidden; touch-action: none;
+}
 
-        /* KARTU UTAMA */
-        .card {
-            position: relative; width: 100%; max-width: 900px;
-            background: rgba(15, 15, 20, 0.85);
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            border-radius: 20px;
-            display: flex; flex-direction: row;
-            padding: 30px; gap: 30px; z-index: 10;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
-            transition: transform 0.1s ease-out;
-            transform-style: preserve-3d;
-            will-change: transform;
-        }
+/* ── CANVAS SPIDER ── */
+canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 9999; pointer-events: none; /* Biar tetap bisa klik menu */
+}
 
-        .img-box {
-            flex: 1.2; border-radius: 15px; overflow: hidden;
-            border: 2px solid #00f0ff; min-height: 400px;
-            pointer-events: none;
-        }
-        
-        .img-box img { 
-            width: 100%; height: 100%; 
-            object-fit: cover; object-position: center 61%; 
-            display: block; 
-        }
+/* ── BACKGROUND ── */
+.bg-base { position: fixed; inset: 0; z-index: -5; background: radial-gradient(circle, #001c27 0%, #000 100%); }
 
-        .content { flex: 1; display: flex; flex-direction: column; justify-content: center; color: white; text-align: left; }
-        .tag { font-family: 'Orbitron', sans-serif; font-size: 10px; color: #00f0ff; letter-spacing: 5px; margin-bottom: 12px; }
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 3.5rem; line-height: 1; margin-bottom: 10px; text-shadow: 0 0 20px #00f0ff; }
-        .location { font-size: 13px; letter-spacing: 2px; opacity: 0.8; margin-bottom: 20px; border-left: 3px solid #ffb7c5; padding-left: 15px; }
-        
-        .cdid-info { background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.15); padding: 18px; border-radius: 12px; margin-bottom: 25px; }
-        .cdid-info p { font-size: 13px; line-height: 1.6; color: #ccc; }
-        .cdid-info b { color: #00f0ff; font-family: 'Orbitron', sans-serif; font-size: 10px; display: block; margin-bottom: 6px; }
+.scene {
+    position: relative; display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px; perspective: 1500px;
+}
 
-        .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        .btn {
-            padding: 16px; border-radius: 10px; text-decoration: none; color: white;
-            font-weight: 800; font-family: 'Orbitron', sans-serif; font-size: 11px;
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex; justify-content: space-between; transition: 0.4s;
-        }
+/* ── MIRKO DI BELAKANG ── */
+.mirko {
+    position: absolute; right: calc(50% - 500px); bottom: -50px;
+    width: 600px; z-index: 1; pointer-events: none;
+    filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 40px rgba(0, 240, 255, 0.5));
+    will-change: transform;
+}
 
-        /* RESPONSIVE MOBILE FIX */
-        @media (max-width: 850px) {
-            body { padding: 20px 15px; align-items: flex-start; overflow-y: auto; }
-            .card { flex-direction: column; padding: 20px; gap: 20px; margin-top: 20px; }
-            .img-box { min-height: 280px; flex: none; }
-            h1 { font-size: 2.5rem; text-align: center; }
-            .tag { text-align: center; }
-            .location { border-left: none; border-bottom: 2px solid #ffb7c5; padding-bottom: 10px; text-align: center; margin: 0 auto 20px auto; }
-            .content { text-align: center; }
-            .cdid-info { text-align: left; }
-        }
-    </style>
+/* ── CARD BENING ── */
+.tilt-wrap { width: 100%; max-width: 950px; z-index: 10; transform-style: preserve-3d; }
+
+.card {
+    position: relative; background: rgba(2, 14, 28, 0.2); 
+    backdrop-filter: blur(12px) saturate(1.8); -webkit-backdrop-filter: blur(12px) saturate(1.8);
+    border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 40px;
+    display: grid; grid-template-columns: 380px 1fr; overflow: hidden;
+}
+
+.visual { padding: 30px; }
+.img-wrap { width: 100%; height: 500px; border-radius: 25px; overflow: hidden; border: 2px solid var(--c); }
+.img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.info { padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+h1 {
+    font-family: 'Orbitron'; font-size: clamp(3rem, 6vw, 5.5rem); line-height: 0.9; margin-bottom: 20px;
+    background: linear-gradient(#fff, var(--c)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.bio { background: rgba(0, 240, 255, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--c); margin-bottom: 25px; }
+.bio p { font-size: 14px; color: #fff; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 30px; }
+.stat { background: rgba(0,0,0,0.6); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--c); }
+.stat-v { font-family: 'Orbitron'; color: var(--c); font-size: 1.2rem; }
+
+.links { display: flex; flex-direction: column; gap: 12px; }
+.btn {
+    padding: 18px; border-radius: 12px; text-decoration: none; color: #fff;
+    font-family: 'Orbitron'; font-size: 11px; text-align: center;
+    background: rgba(0, 240, 255, 0.15); border: 1px solid var(--c); transition: 0.3s;
+}
+.btn:hover { background: var(--c); color: #000; box-shadow: 0 0 20px var(--c); }
+
+@media (max-width: 880px) {
+    .card { grid-template-columns: 1fr; border-radius: 25px; }
+    .mirko { width: 350px; right: -20px; bottom: 0; opacity: 0.5; }
+    .visual { display: none; }
+    *, *::before, *::after { cursor: auto; }
+}
+</style>
 </head>
 <body>
 
-<div class="sakura-box" id="sakura"></div>
+<canvas id="canvas"></canvas>
+<div class="bg-base"></div>
 
-<div class="card" id="mainCard">
-    <div class="img-box"><img src="innova.png"></div>
-    <div class="content">
-        <p class="tag">CDID ELITE // ID 083</p>
-        <h1>ELFIGO</h1>
-        <p class="location">PONTIANAK, WEST BORNEO</p>
-        <div class="cdid-info">
-            <b>COMMUNITY STATUS</b>
-            <p>Active member of CDID Pontianak Region. Focus on 2GD-FTV Diesel performance and fitment. Part of the Elite Driver circle ID: 083.</p>
-        </div>
-        <div class="btn-group">
-            <a href="https://wa.me/6283857796343" class="btn" target="_blank">CONTACT WHATSAPP <span>→</span></a>
-            <a href="https://discord.gg/cemxjsmRH" class="btn" target="_blank">JOIN DISCORD <span>→</span></a>
+<div class="scene">
+    <img src="mirkok.png" class="mirko" id="mirko">
+
+    <div class="tilt-wrap" id="tiltWrap">
+        <div class="card">
+            <div class="visual">
+                <div class="img-wrap"><img src="innova.png"></div>
+            </div>
+            <div class="info">
+                <p style="font-family:'Orbitron'; font-size:10px; color:var(--c); margin-bottom:10px;">ELITE REGISTRY // 083</p>
+                <h1>ELFIGO</h1>
+                <div class="bio">
+                    <p>Membangun <b>2KD-FTV Diesel</b> dengan konsep <em>Pure Stance</em>. Menembus batas performa dan estetika.</p>
+                </div>
+                <div class="stats">
+                    <div class="stat"><div class="stat-v">2KD</div></div>
+                    <div class="stat"><div class="stat-v">FTV</div></div>
+                    <div class="stat"><div class="stat-v">083</div></div>
+                </div>
+                <div class="links">
+                    <a href="https://wa.me/6283857796343" class="btn" target="_blank">CHAT WHATSAPP</a>
+                    <a href="https://discord.gg/cemxjsmRH" class="btn" target="_blank">JOIN DISCORD</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Sakura
-    const sakura = document.getElementById('sakura');
-    for(let i=0; i<30; i++) {
-        let p = document.createElement('div');
-        p.className = 'petal';
-        p.style.left = Math.random()*100+'%';
-        p.style.width = p.style.height = (Math.random()*7+5)+'px';
-        p.style.animationDuration = (Math.random()*6+4)+'s';
-        sakura.appendChild(p);
+/* ── SPIDER CURSOR ENGINE ── */
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let points = [];
+let mouse = { x: null, y: null };
+
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('touchstart', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+class Point {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
     }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
 
-    const card = document.getElementById('mainCard');
-
-    function applyTilt(x, y) {
-        const rx = (window.innerHeight / 2 - y) / 35;
-        const ry = (window.innerWidth / 2 - x) / 35;
-        card.style.transform = `rotateX(${rx}deg) rotateY(${-ry}deg)`;
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 150) {
+            this.x += dx * 0.02;
+            this.y += dy * 0.02;
+        }
     }
+}
 
-    window.addEventListener('mousemove', (e) => {
-        applyTilt(e.clientX, e.clientY);
+for (let i = 0; i < 60; i++) points.push(new Point(Math.random()*canvas.width, Math.random()*canvas.height));
+
+function animateSpider() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    points.forEach(p => {
+        p.update();
+        points.forEach(p2 => {
+            let dx = p.x - p2.x;
+            let dy = p.y - p2.y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 100) {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(0, 240, 255, ${1 - dist/100})`;
+                ctx.lineWidth = 0.5;
+                ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            }
+        });
+        
+        let dx = p.x - mouse.x;
+        let dy = p.y - mouse.y;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 150) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 240, 255, ${1 - dist/150})`;
+            ctx.lineWidth = 1.5;
+            ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
+            ctx.stroke();
+        }
     });
+    requestAnimationFrame(animateSpider);
+}
+animateSpider();
 
-    window.addEventListener('touchmove', (e) => {
-        const touch = e.touches[0];
-        applyTilt(touch.clientX, touch.clientY);
-    }, { passive: true });
+/* ── PARALLAX ── */
+const tiltWrap = document.getElementById('tiltWrap');
+const mirko = document.getElementById('mirko');
+let tmkX = 0, tmkY = 0, mkX = 0, mkY = 0;
 
-    window.addEventListener('touchend', () => {
-        card.style.transition = "transform 0.6s ease";
-        card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-        setTimeout(() => { card.style.transition = "transform 0.1s ease-out"; }, 600);
-    });
+document.addEventListener('mousemove', e => {
+    const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+    const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+    tiltWrap.style.transform = `rotateX(${-ny * 8}deg) rotateY(${nx * 8}deg)`;
+    tmkX = nx * 50; tmkY = ny * 25;
+});
+
+(function loop() {
+    mkX += (tmkX - mkX) * 0.05; mkY += (tmkY - mkY) * 0.05;
+    mirko.style.transform = `translateX(${mkX}px) translateY(${mkY + Math.sin(Date.now()*0.002)*15}px)`;
+    requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>
