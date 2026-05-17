@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELFIGO | SUPREME DIESEL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;900&display=swap');
+
+:root { --c: #00f0ff; --bg: #020b14; }
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; cursor: none; }
+
+body, html { 
+    background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; 
+    min-height: 100vh; overflow-x: hidden; touch-action: manipulation;
+}
+
+/* ── CANVAS SPIDER ── */
+canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 100; pointer-events: none;
+}
+
+.bg-base { position: fixed; inset: 0; z-index: -5; background: radial-gradient(circle, #001c27 0%, #000 100%); }
+
+.scene {
+    position: relative; display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 20px; perspective: 1000px;
+}
+
+/* ── MIRKO BALIK KE SAMPING ── */
+.mirko {
+    position: absolute; 
+    right: -5%; /* Geser ke samping kanan */
+    bottom: -20px;
+    height: 90vh; 
+    width: auto; 
+    z-index: 1; 
+    pointer-events: none;
+    filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 40px rgba(0, 240, 255, 0.4));
+    will-change: transform;
+}
+
+/* ── CARD SUPER TRANSPARAN (GLASSMORPHISM) ── */
+.tilt-wrap { width: 100%; max-width: 950px; z-index: 10; transform-style: preserve-3d; }
+
+.card {
+    position: relative; 
+    background: rgba(2, 14, 28, 0.15); /* Dibuat jauh lebih bening */
+    backdrop-filter: blur(8px) saturate(1.8); /* Blur dikurangi biar Mirko kelihatan */
+    -webkit-backdrop-filter: blur(8px) saturate(1.8);
+    border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 40px;
+    display: grid; grid-template-columns: 400px 1fr; overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+}
+
+.visual { padding: 30px; display: block; }
+.img-wrap { width: 100%; height: 500px; border-radius: 25px; overflow: hidden; border: 1px solid var(--c); }
+.img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.info { padding: 50px; display: flex; flex-direction: column; justify-content: center; }
+
+h1 {
+    font-family: 'Orbitron'; font-size: clamp(3rem, 6vw, 6rem); line-height: 1; margin-bottom: 20px;
+    background: linear-gradient(#fff, var(--c)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.bio { background: rgba(0, 240, 255, 0.1); padding: 20px; border-radius: 15px; border-left: 5px solid var(--c); margin-bottom: 25px; }
+.bio p { font-size: 14px; color: #fff; line-height: 1.6; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 35px; }
+.stat { background: rgba(0,0,0,0.7); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--c); }
+.stat-v { font-family: 'Orbitron'; color: var(--c); font-size: 1.3rem; }
+
+.links { display: flex; flex-direction: column; gap: 12px; }
+.btn {
+    padding: 18px; border-radius: 12px; text-decoration: none; color: #fff;
+    font-family: 'Orbitron'; font-size: 11px; text-align: center;
+    background: rgba(0, 240, 255, 0.1); border: 1px solid var(--c); transition: 0.3s;
+}
+.btn:hover { background: var(--c); color: #000; box-shadow: 0 0 30px var(--c); }
+
+@media (max-width: 880px) {
+    .card { grid-template-columns: 1fr; border-radius: 30px; }
+    .visual { padding: 20px; }
+    .img-wrap { height: 250px; }
+    .info { padding: 30px; text-align: center; }
+    .mirko { height: 70vh; right: -20%; } 
+    *, *::before, *::after { cursor: auto; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="bg-base"></div>
+
+<div class="scene">
+    <img src="mirkok.png" class="mirko" id="mirko">
+
+    <div class="tilt-wrap" id="tiltWrap">
+        <div class="card">
+            <div class="visual">
+                <div class="img-wrap"><img src="innova.png"></div>
+            </div>
+            <div class="info">
+                <p style="font-family:'Orbitron'; font-size:10px; color:var(--c); margin-bottom:10px; letter-spacing:4px;">CDID PRIDE REGISTRY</p>
+                <h1>ELFIGO</h1>
+                <div class="bio">
+                    <p>Membangun <b>2KD-FTV Diesel</b> dengan dedikasi penuh. Konsep <em>pure stance & fitment</em> untuk skena CDID Pontianak.</p>
+                </div>
+                <div class="stats">
+                    <div class="stat"><div class="stat-v">2KD</div></div>
+                    <div class="stat"><div class="stat-v">FTV</div></div>
+                    <div class="stat"><div class="stat-v">083</div></div>
+                </div>
+                <div class="links">
+                    <a href="https://wa.me/6283857796343" class="btn" target="_blank">💬 CHAT WHATSAPP</a>
+                    <a href="https://discord.gg/cemxjsmRH" class="btn" target="_blank">🎮 JOIN DISCORD</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ── SPIDER ENGINE ── */
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let points = [];
+let mouse = { x: -1000, y: -1000 };
+
+const updateMouse = (e) => {
+    mouse.x = e.clientX || (e.touches && e.touches[0].clientX);
+    mouse.y = e.clientY || (e.touches && e.touches[0].clientY);
+};
+window.addEventListener('mousemove', updateMouse);
+window.addEventListener('touchstart', updateMouse);
+window.addEventListener('touchmove', updateMouse);
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize);
+resize();
+
+class Point {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 1.5;
+        this.vy = (Math.random() - 0.5) * 1.5;
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+}
+for (let i = 0; i < 55; i++) points.push(new Point());
+
+function draw() {
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    points.forEach(p => {
+        p.update();
+        let dx = mouse.x - p.x;
+        let dy = mouse.y - p.y;
+        let d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 180) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 240, 255, ${1 - d/180})`;
+            ctx.lineWidth = 0.8;
+            ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
+            ctx.stroke();
+        }
+    });
+    requestAnimationFrame(draw);
+}
+draw();
+
+/* ── MIRKO ANIMATION ── */
+const mirko = document.getElementById('mirko');
+let ft = 0;
+function animate() {
+    ft += 0.015;
+    mirko.style.transform = `translateY(${Math.sin(ft) * 12}px)`;
+    requestAnimationFrame(animate);
+}
+animate();
+
+// Parallax Card
+document.addEventListener('mousemove', e => {
+    const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+    const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+    document.getElementById('tiltWrap').style.transform = `rotateX(${-ny * 8}deg) rotateY(${nx * 8}deg)`;
+});
+</script>
+</body>
+</html>
